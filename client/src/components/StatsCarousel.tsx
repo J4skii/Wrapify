@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StoryCard } from "./StoryCard";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Share2, RefreshCw } from "lucide-react";
+import { toPng } from "html-to-image";
 import { api } from "@shared/routes";
 
 interface StatsCarouselProps {
@@ -13,6 +14,23 @@ interface StatsCarouselProps {
 
 export function StatsCarousel({ stats, onRegenerate, isRegenerating }: StatsCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const handleShare = async () => {
+    if (carouselRef.current === null) {
+      return;
+    }
+
+    try {
+      const dataUrl = await toPng(carouselRef.current, { cacheBust: true });
+      const link = document.createElement("a");
+      link.download = `wrapify-share-${Date.now()}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Failed to generate share image", err);
+    }
+  };
 
   // Parse stats if they are stored as JSON string, otherwise use directly
   const data = typeof stats === 'string' ? JSON.parse(stats) : stats;
@@ -136,7 +154,7 @@ export function StatsCarousel({ stats, onRegenerate, isRegenerating }: StatsCaro
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto gap-8 py-8">
       {/* Mobile-style view container */}
-      <div className="relative w-full max-w-sm aspect-[9/16] mx-auto">
+      <div ref={carouselRef} className="relative w-full max-w-sm aspect-[9/16] mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -189,7 +207,7 @@ export function StatsCarousel({ stats, onRegenerate, isRegenerating }: StatsCaro
           {isRegenerating ? "Generating..." : "Update Stats"}
         </Button>
 
-        <Button variant="outline" className="rounded-full border-white/20 text-white hover:bg-white/10 hover:text-green-400 gap-2">
+        <Button variant="outline" onClick={handleShare} className="rounded-full border-white/20 text-white hover:bg-white/10 hover:text-green-400 gap-2">
           <Share2 className="h-4 w-4" /> Share
         </Button>
 
