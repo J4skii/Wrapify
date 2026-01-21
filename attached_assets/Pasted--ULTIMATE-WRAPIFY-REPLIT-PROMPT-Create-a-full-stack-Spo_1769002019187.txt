@@ -1,0 +1,157 @@
+# ULTIMATE WRAPIFY REPLIT PROMPT
+
+Create a full-stack Spotify "Wrapped" style application with the following exact specifications:
+
+## PROJECT NAME: Wrapify 2.0
+
+## TECH STACK:
+- Frontend: React with TypeScript, Tailwind CSS, Framer Motion for animations
+- Backend: Node.js/Express with TypeScript
+- Database: SQLite for development (Replit-compatible)
+- Auth: Spotify OAuth 2.0
+- API: Spotify Web API
+
+## COMPLETE FILE STRUCTURE:
+wrapify-app/
+├── client/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── LoginButton.tsx
+│   │   │   ├── WrapCard.tsx
+│   │   │   ├── ArtistGrid.tsx
+│   │   │   ├── StatsChart.tsx
+│   │   │   └── ShareModal.tsx
+│   │   ├── pages/
+│   │   │   ├── Home.tsx
+│   │   │   ├── Dashboard.tsx
+│   │   │   └── WrapView.tsx
+│   │   ├── services/
+│   │   │   └── api.ts
+│   │   ├── types/
+│   │   │   └── spotify.ts
+│   │   ├── App.tsx
+│   │   └── index.tsx
+│   ├── package.json
+│   └── tailwind.config.js
+├── server/
+│   ├── src/
+│   │   ├── routes/
+│   │   │   ├── auth.ts
+│   │   │   ├── spotify.ts
+│   │   │   └── wraps.ts
+│   │   ├── services/
+│   │   │   └── spotifyService.ts
+│   │   ├── utils/
+│   │   │   └── wrapGenerator.ts
+│   │   ├── index.ts
+│   │   └── config.ts
+│   ├── package.json
+│   └── tsconfig.json
+├── package.json (root with scripts for both)
+└── README.md
+
+## ESSENTIAL FEATURES TO IMPLEMENT:
+
+1. SPOTIFY AUTHENTICATION:
+   - Full OAuth 2.0 flow with PKCE
+   - Secure token storage (HTTP-only cookies)
+   - Refresh token handling
+
+2. FRONTEND COMPONENTS:
+   - Modern gradient UI with dark/light mode toggle
+   - Animated login screen with Spotify brand colors
+   - Interactive wrap cards with hover effects
+   - Shareable images (html-to-image for generation)
+   - Responsive design for mobile/desktop
+
+3. BACKEND ROUTES:
+   - GET /api/auth/login - Initiate Spotify OAuth
+   - GET /api/auth/callback - OAuth callback handler
+   - GET /api/me - Get user profile
+   - GET /api/top-tracks - Get user's top tracks (short/medium/long term)
+   - GET /api/top-artists - Get user's top artists
+   - GET /api/recent - Get recently played tracks
+   - POST /api/generate-wrap - Generate wrap with stats
+
+4. WRAP GENERATION LOGIC:
+   - Calculate listening personality (based on genres)
+   - Generate fun titles: "80s Rock Rebel", "Indie Explorer", "Pop Connoisseur"
+   - Create stats: Total minutes, top genres, artist diversity score
+   - Time period comparisons (last month vs all time)
+
+5. DATABASE SCHEMA:
+   - Users: id, spotify_id, access_token, refresh_token, created_at
+   - Wraps: id, user_id, data (JSON), share_url, created_at
+
+6. VISUAL DESIGN SPECIFICS:
+   - Color scheme: Spotify black/green with neon accents
+   - Gradients: bg-gradient-to-br from-spotifyBlack to-gray-900
+   - Card design: Glassmorphism with backdrop-blur
+   - Animations: Staggered card entries, floating elements
+   - Typography: Spotify Circular font style
+
+## COMPLETE IMPLEMENTATION DETAILS:
+
+### Server/index.ts must include:
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import authRoutes from './routes/auth';
+import spotifyRoutes from './routes/spotify';
+
+const app = express();
+app.use(cors({ origin: true, credentials: true }));
+app.use(cookieParser());
+app.use('/api/auth', authRoutes);
+app.use('/api/spotify', spotifyRoutes);
+
+### Client/App.tsx must include:
+- React Router for navigation
+- Auth context provider
+- Spotify player integration option
+- Error boundary
+- Loading skeletons
+
+### Key utility functions to write:
+1. generatePersonalityType(genres: string[]): string
+   - Analyzes genres and returns fun personality label
+   
+2. createShareImage(wrapData: WrapData): Promise<string>
+   - Uses html-to-image to generate PNG for sharing
+   
+3. calculateStats(topTracks: Track[]): Stats
+   - Computes total minutes, genre distribution, etc.
+
+### ENVIRONMENT VARIABLES NEEDED:
+- SPOTIFY_CLIENT_ID
+- SPOTIFY_CLIENT_SECRET
+- REDIRECT_URI (http://localhost:3000/api/auth/callback for dev)
+- SESSION_SECRET
+- DATABASE_URL
+
+## DEPLOYMENT READINESS:
+- Include Dockerfile for containerization
+- Health check endpoints
+- Rate limiting on API routes
+- Error logging setup
+
+## TESTIMONIALS PAGE:
+- Include exact testimonials from the original Wrapify site
+- Add carousel/slider for testimonials
+- Make it visually match the fun tone
+
+## BONUS FEATURES:
+1. Mock data mode for testing without Spotify login
+2. Export wrap as PDF option
+3. Compare with friends feature (if they share links)
+4. Annual wrap archive
+
+## CRITICAL: Make it fully runnable on Replit
+- Use Replit's built-in database
+- Handle Replit's dynamic port assignment
+- Include .replit file with run command: "npm run dev"
+- Set up proper process.env handling for Replit secrets
+
+Generate ALL files with complete, production-ready code. No placeholders. Include detailed comments for complex logic. Use modern React hooks (useState, useEffect, useContext) and async/await patterns throughout.
